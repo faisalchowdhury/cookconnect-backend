@@ -1,0 +1,29 @@
+services:
+  mongo:
+    image: mongo:7
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  api:
+    build: .
+    ports:
+      - "6000:6000"
+    environment:
+      NODE_ENV: development
+      PORT: 6000
+      MONGODB_URI: mongodb://mongo:27017/cookconnect
+      JWT_ACCESS_SECRET: local-dev-access-secret-min-32-chars!!
+      JWT_REFRESH_SECRET: local-dev-refresh-secret-min-32-chars!
+      CORS_ORIGINS: http://localhost:6003,http://localhost:6001
+      MAIL_DRIVER: console
+      STORAGE_DRIVER: local
+      UPLOAD_DIR: /app/uploads
+    volumes:
+      - ./uploads:/app/uploads
+    depends_on:
+      - mongo
+
+volumes:
+  mongo_data:
